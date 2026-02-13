@@ -1,0 +1,79 @@
+import axios from 'axios';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Important: sends cookies with requests
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Response interceptor for token refresh (cookie-based)
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If we get a 401 and haven't retried yet, try to refresh tokens
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Refresh tokens using cookies (no need to pass refreshToken in body)
+        await axios.post(
+          `${API_BASE_URL}/api/auth/refresh-tokens`,
+          {},
+          { withCredentials: true }
+        );
+        // Retry the original request with new cookies
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed, redirect to login
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// Auth API
+export const authAPI = {
+  register: (data: { email: string; password: string; name: string }) =>
+    apiClient.post('/api/auth/register', data),
+  login: (data: { email: string; password: string }) =>
+    apiClient.post('/api/auth/login', data),
+  logout: () => apiClient.post('/api/auth/logout'),
+  refreshTokens: () =>
+    apiClient.post('/api/auth/refresh-tokens', {}),
+  verifyEmail: (token: string) =>
+    apiClient.get('/api/auth/verify-email', { params: { token } }),
+  forgotPassword: (email: string) =>
+    apiClient.post('/api/auth/forgot-password', { email }),
+  resetPassword: (data: { token: string; password: string }) =>
+    apiClient.post('/api/auth/reset-password', data),
+};
+
+// User API
+export const userAPI = {
+  getMe: () => apiClient.get('/api/user/me'),
+};
+
+// Todo API
+export const todoAPI = {
+  addTask: (data: { content: string }) =>
+    apiClient.post('/api/todo/add-task', data),
+  updateTask: (data: { taskId: number; content?: string; status?: number }) =>
+    apiClient.put('/api/todo/update-task', data),
+  getAllTasks: () => apiClient.get('/api/todo/query-all-tasks'),
+  deleteTask: (taskId: number) =>
+    apiClient.delete('/api/todo/delete-task', { 
+      data: { taskId },
+      headers: { 'Content-Type': 'application/json' }
+    }),
+};
+
+export default apiClient;
