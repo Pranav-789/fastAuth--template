@@ -30,8 +30,11 @@ apiClient.interceptors.response.use(
         // Retry the original request with new cookies
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, redirect to login
-        window.location.href = '/login';
+        // Refresh failed, redirect to login unless specifically skipped (e.g. for initial auth check)
+        // @ts-ignore
+        if (!originalRequest.skipAuthRedirect) {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       }
     }
@@ -54,12 +57,13 @@ export const authAPI = {
   forgotPassword: (email: string) =>
     apiClient.post('/api/auth/forgot-password', { email }),
   resetPassword: (data: { token: string; password: string }) =>
-    apiClient.post('/api/auth/reset-password', data),
+    apiClient.post('/api/auth/reset-password', { token: data.token, newPassword: data.password }),
 };
 
 // User API
 export const userAPI = {
-  getMe: () => apiClient.get('/api/user/me'),
+  // @ts-ignore
+  getMe: () => apiClient.get('/api/user/me', { skipAuthRedirect: true }),
 };
 
 // Todo API
@@ -70,7 +74,7 @@ export const todoAPI = {
     apiClient.put('/api/todo/update-task', data),
   getAllTasks: () => apiClient.get('/api/todo/query-all-tasks'),
   deleteTask: (taskId: number) =>
-    apiClient.delete('/api/todo/delete-task', { 
+    apiClient.delete('/api/todo/delete-task', {
       data: { taskId },
       headers: { 'Content-Type': 'application/json' }
     }),

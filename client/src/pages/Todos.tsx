@@ -71,8 +71,8 @@ export default function Todos() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Todos</h1>
-        <p className="text-gray-600">Manage your tasks and stay organized.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Todos</h1>
+        <p className="text-gray-600 dark:text-gray-400">Manage your tasks and stay organized.</p>
       </div>
 
       {/* Add Todo Form */}
@@ -83,13 +83,13 @@ export default function Todos() {
             value={newTodoContent}
             onChange={(e) => setNewTodoContent(e.target.value)}
             placeholder="Add a new task..."
-            className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-400 focus:border-transparent placeholder-gray-500 dark:placeholder-gray-400"
             disabled={isAdding}
           />
           <button
             type="submit"
             disabled={isAdding || !newTodoContent.trim()}
-            className="px-6 py-2.5 bg-gray-900 text-white rounded-md font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-md font-medium hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isAdding ? 'Adding...' : 'Add'}
           </button>
@@ -99,11 +99,11 @@ export default function Todos() {
       {/* Todos List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading todos...</div>
+          <div className="text-gray-500 dark:text-gray-400">Loading todos...</div>
         </div>
       ) : todos.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-500">No tasks yet. Add one above to get started!</p>
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
+          <p className="text-gray-500 dark:text-gray-400">No tasks yet. Add one above to get started!</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -112,29 +112,28 @@ export default function Todos() {
             return (
               <div
                 key={todo.id}
-                className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow"
+                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:shadow-sm transition-all duration-200"
               >
                 <div className="flex items-start gap-3">
                   <input
                     type="checkbox"
                     checked={isCompleted}
                     onChange={() => handleToggleTodo(todo)}
-                    className="mt-1 w-5 h-5 rounded border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-900"
+                    className="mt-1 w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-gray-900 dark:text-blue-500 focus:ring-2 focus:ring-gray-900 dark:focus:ring-offset-gray-800"
                   />
                   <div className="flex-1 min-w-0">
                     <h3
-                      className={`text-base font-medium ${
-                        isCompleted
-                          ? 'text-gray-400 line-through'
-                          : 'text-gray-900'
-                      }`}
+                      className={`text-base font-medium ${isCompleted
+                          ? 'text-gray-400 dark:text-gray-500 line-through'
+                          : 'text-gray-900 dark:text-white'
+                        }`}
                     >
                       {todo.content}
                     </h3>
                   </div>
                   <button
                     onClick={() => handleDeleteTodo(todo.id)}
-                    className="p-1.5 text-gray-400 hover:text-red-600 rounded hover:bg-red-50 transition-colors"
+                    className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                     title="Delete task"
                   >
                     <svg

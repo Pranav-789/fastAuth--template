@@ -319,7 +319,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
             },
         });
 
-        const resetUrl = `http://localhost:${process.env.PORT}/api/auth/reset-password?token=${resetToken}`;
+        const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
 
         await transporter.sendMail({
             from: `"Your App Name" <${process.env.SMTP_FROM_EMAIL}>`,
