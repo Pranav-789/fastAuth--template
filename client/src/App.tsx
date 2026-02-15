@@ -10,6 +10,11 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Todos from './pages/Todos';
+import Blogs from './pages/Blogs';
+import CreateBlog from './pages/CreateBlog';
+import BlogDetail from './pages/BlogDetail';
+import MyBlogs from './pages/MyBlogs';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
@@ -17,26 +22,38 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            {/* Landing Page Route */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Public Routes - Auto-redirect to dashboard if logged in */}
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              {/* Password Recovery Routes */}
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPassword />} />
             </Route>
 
+            {/* Protected Routes - accessible only if logged in */}
             <Route
-              path="/"
               element={
                 <ProtectedRoute>
                   <Layout />
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="todos" element={<Todos />} />
+              {/* Note: /dashboard is now an absolute path */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/todos" element={<Todos />} />
+              <Route path="/blogs">
+                <Route index element={<Blogs />} />
+                <Route path="create" element={<CreateBlog />} />
+                <Route path=":blogId" element={<BlogDetail />} />
+                <Route path="my-blogs" element={<MyBlogs />} />
+              </Route>
             </Route>
+            
+            {/* Fallback route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

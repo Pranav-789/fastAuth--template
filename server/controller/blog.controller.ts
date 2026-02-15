@@ -15,6 +15,12 @@ export const postBlog = async(req: Request, res: Response) => {
     }
 
     try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { name: true }
+        });
+
+        const authorName = user?.name || "Anonymous";
         const cleanContent = DOMPurify.sanitize(content);
 
         const post = await prisma.blog.create({
@@ -300,11 +306,18 @@ export const commentOnBlog = async(req: Request, res: Response) => {
   }
 
   try {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true }
+    });
+    
+    const commentAuthorName = user?.name || "Anonymous";
+
     const liked = await prisma.comment.create({
       data: {
         userId: userId,
         blogId: blogId,
-        userName: userName,
+        userName: commentAuthorName,
         content: content
       },
     });
@@ -320,7 +333,21 @@ export const queryAuthorsBlogs = async(req: Request, res: Response) => {
   const userId = req.user.userId;
 
   try {
-    const authorBlogPosts = await prisma.blog.findMany({where: {userId: userId}});
+    const authorBlogPosts = await prisma.blog.findMany({
+      where: { userId: userId },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        authorName: true,
+        _count: {
+          select: { likes: true },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
     return res.status(200).json({message: "Blogs fetched successfully", data: authorBlogPosts});
   } catch (error) {
@@ -348,7 +375,12 @@ export const queryComments = async(req: Request, res: Response) => {
 
 
   try {
-    const commentsOnPost = await prisma.comment.findMany({where: {blogId: blogId}});
+    const commentsOnPost = await prisma.comment.findMany({
+        where: {blogId: blogId},
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
 
     return res.status(200).json({ message: "Comments fetched successfully", data: commentsOnPost });
   } catch (error) {

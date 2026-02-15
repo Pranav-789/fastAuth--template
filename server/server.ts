@@ -41,12 +41,14 @@ app.get('/', (req: Request, res: Response) => {
 import authRouter from '../server/route/auth.routes.js'
 import userRouter from '../server/route/user.routes.js'
 import todoRouter from '../server/route/todo.route.js'
+import blogRouter from '../server/route/blog.route.js'
 import { prisma } from './db/prisma.js';
 app.use('/api/auth', authRouter)
 
 app.use('/api/user',userRouter);
 
 app.use('/api/todo', todoRouter);
+app.use('/api/blog', blogRouter);
 
 // e.g. in some test route
 app.get("/db-health", async (_req, res) => {

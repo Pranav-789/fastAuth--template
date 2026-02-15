@@ -82,4 +82,27 @@ export const todoAPI = {
     }),
 };
 
+// Blog API
+export const blogAPI = {
+  create: (data: { title: string; content: string }) =>
+    apiClient.post('/api/blog/create', data),
+  update: (data: { postId: number; newTitle: string; newContent: string }) =>
+    apiClient.put('/api/blog/update', data),
+  getById: (postId: number) => apiClient.get(`/api/blog/get/${postId}`),
+  getPopular: (pageNum: number) => apiClient.get(`/api/blog/popular/${pageNum}`),
+  checkLike: (blogId: number) => apiClient.get(`/api/blog/check-like/${blogId}`),
+  countByAuthor: (authorId: number) => apiClient.get(`/api/blog/count-author/${authorId}`),
+  getRecent: (pageNum: number) => apiClient.get(`/api/blog/recent/${pageNum}`),
+  like: (blogId: number) => apiClient.post('/api/blog/like', { blogId }),
+  comment: (data: { blogId: number; content: string }) =>
+    apiClient.post('/api/blog/comment', data),
+  getMyBlogs: () => apiClient.get('/api/blog/my-blogs'),
+  delete: (blogId: number) =>
+    apiClient.delete('/api/blog/delete', {
+      data: { blogId },
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  getComments: (blogId: number) => apiClient.get(`/api/blog/comments/${blogId}`),
+};
+
 export default apiClient;
