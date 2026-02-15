@@ -3,7 +3,7 @@ import { prisma } from "../db/prisma.js";
 import bcrypt from "bcryptjs";
 import { generateAccessToken, generateRefreshToken, generateResetPasswwordToken, generateVerifyMailToken, RefreshTokenPayload } from "../utils/generateTokens.js";
 import jwt from 'jsonwebtoken'
-import { transporter } from "../utils/mailer.js";
+import { sendForgotPasswordEmail, sendRegistrationVerifyEmail, sendVerifyEmailMail, transporter } from "../utils/mailer.js";
 
 export const registerUser = async (req: Request, res: Response) => {
     const {email, name, password} = req.body;
@@ -34,54 +34,7 @@ export const registerUser = async (req: Request, res: Response) => {
         const verifyEmailToken = generateVerifyMailToken(newUser.id);
         const verifyUrl = `http://localhost:${process.env.PORT}/api/auth/verify-email?token=${verifyEmailToken}`;
 
-        const mail = await transporter.sendMail({
-            from: `"Your App Name" <${process.env.SMTP_FROM_EMAIL}>`,
-            to: email,
-            subject: "Verify your email address",
-            text: `
-                Hello ${name},
-
-                Thanks for registering!
-
-                Please verify your email by clicking the link below:
-                ${verifyUrl}
-
-                If you did not create an account, you can safely ignore this email.
-
-                — Your App Team
-              `,
-            html: `
-                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                <h2>Welcome, ${name} 👋</h2>
-                <p>Thanks for registering with us.</p>
-                <p>Please verify your email address by clicking the button below:</p>
-
-                <a 
-                    href="${verifyUrl}" 
-                    style="
-                    display: inline-block;
-                    padding: 12px 20px;
-                    background-color: #4f46e5;
-                    color: #ffffff;
-                    text-decoration: none;
-                    border-radius: 6px;
-                    font-weight: bold;
-                    "
-                >
-                Verify Email
-                </a>
-
-                <p style="margin-top: 20px;">
-                Or copy and paste this link into your browser:
-                </p>
-                <p>${verifyUrl}</p>
-
-                <p style="margin-top: 30px; font-size: 12px; color: #555;">
-                If you did not create an account, please ignore this email.
-                </p>
-                </div>
-                `,
-        });
+        sendRegistrationVerifyEmail(newUser.email, newUser.name, verifyUrl);
 
         return res.status(201).json({
             message: "User created successfully",
@@ -94,6 +47,38 @@ export const registerUser = async (req: Request, res: Response) => {
     } catch (error) {
         console.log("Error occured in creating a user", error);
         return res.status(500).json({message: "Failed to create a new user!!"});
+    }
+}
+
+export const reqVerifyEmail = async(req: Request, res: Response) => {
+    const { email } = req.body;
+    try {
+        if (!email?.trim()) {
+          return res.status(400).json({ message: "All fields are required" });
+        }
+        const normEmail = email.toLowerCase().trim();
+        const existingUser = await prisma.user.findUnique({
+          where: { email: normEmail },
+        });
+
+        if (!existingUser) {
+          return res
+            .status(400)
+            .json({
+              message:
+                "The user with this email does not exists, failed to register",
+            });
+        }
+
+        const verifyEmailToken = generateVerifyMailToken(existingUser.id);
+        const verifyUrl = `http://localhost:${process.env.PORT}/api/auth/verify-email?token=${verifyEmailToken}`;
+
+        sendVerifyEmailMail(normEmail, verifyUrl);
+    } catch (error) {
+        console.log("Error occured in sending a mail", error);
+        return res
+          .status(500)
+          .json({ message: "Failed to send a new mail!!" });
     }
 }
 
@@ -321,36 +306,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
         const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
 
-        await transporter.sendMail({
-            from: `"Your App Name" <${process.env.SMTP_FROM_EMAIL}>`,
-            to: user.email,
-            subject: "Reset your password",
-            text: `
-Hello ${user.name ?? ""},
-
-You requested a password reset.
-
-Click the link below to reset your password:
-${resetUrl}
-
-This link will expire in 15 minutes.
-
-If you didn't request this, ignore this email.
-`,
-            html: `
-<div style="font-family: Arial; line-height: 1.6">
-  <h2>Password Reset 🔐</h2>
-  <p>You requested a password reset.</p>
-  <a href="${resetUrl}"
-     style="padding:12px 18px;background:#ef4444;color:#fff;text-decoration:none;border-radius:6px">
-     Reset Password
-  </a>
-  <p style="margin-top:20px;font-size:12px;color:#555">
-    This link expires in 15 minutes.
-  </p>
-</div>
-`,
-        });
+        sendForgotPasswordEmail(user.email, user.name, resetUrl);
 
         return res.status(200).json({
             message: "If the email exists, a reset link has been sent",

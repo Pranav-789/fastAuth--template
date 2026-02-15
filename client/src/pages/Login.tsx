@@ -8,12 +8,14 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, reqVerifyEmail } = useAuth(); // Added reqVerifyEmail
+  const [verificationSent, setVerificationSent] = useState(false); // Added state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setVerificationSent(false);
 
     try {
       await login({ email, password });
@@ -29,6 +31,27 @@ export default function Login() {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    setVerificationSent(false);
+
+    try {
+        await reqVerifyEmail(email);
+        setVerificationSent(true);
+        setError('');
+    } catch (err: any) {
+        const errorMessage = err.response?.data?.message || 'Failed to send verification email.';
+        setError(errorMessage);
+    } finally {
+        setLoading(false);
+    }
+ };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 transition-colors duration-200">
       <div className="max-w-md w-full">
@@ -43,6 +66,12 @@ export default function Login() {
               <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-md text-sm">
                 {error}
               </div>
+            )}
+            
+            {verificationSent && (
+                <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-md text-sm">
+                    Verification email sent! Please check your inbox.
+                </div>
             )}
 
             <div>
@@ -86,6 +115,15 @@ export default function Login() {
               className="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-2.5 px-4 rounded-md font-medium hover:bg-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-white focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+            
+            <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={loading}
+                className="w-full mt-2 bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2.5 px-4 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+                Resend Verification Email
             </button>
           </form>
 

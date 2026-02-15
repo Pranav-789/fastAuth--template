@@ -15,6 +15,7 @@ interface AuthContextType {
     register: (data: Parameters<typeof authAPI.register>[0]) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
+    reqVerifyEmail: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,6 +62,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const reqVerifyEmail = async (email: string) => {
+        await authAPI.reqVerifyEmail(email);
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -71,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 register,
                 logout,
                 checkAuth,
+                reqVerifyEmail,
             }}
         >
             {children}
