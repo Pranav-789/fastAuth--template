@@ -8,9 +8,7 @@ dotenv.config();
 const app = express();
 
 // CORS configuration
-const allowedOrigins = process.env.CLIENT_URL 
-  ? process.env.CLIENT_URL.split(',')
-  : ['http://localhost:5173', 'http://localhost:3000'];
+const allowedOrigins = process.env.CLIENT_URL as string;
 
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
@@ -65,3 +63,5 @@ app.get("/db-health", async (_req, res) => {
 app.listen(port, () => {
     console.log(`The server is running on port ${port}`);
 });
+
+export default app;

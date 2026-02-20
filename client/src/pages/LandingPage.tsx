@@ -1,38 +1,13 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { ArrowRight, BookOpen, PenTool, MessageCircle, BarChart, Shield, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { blogAPI } from '../lib/api';
-import DOMPurify from 'dompurify';
-
-interface BlogPost {
-  id: number;
-  title: string;
-  content: string;
-  authorName: string;
-  createdAt: string;
-  _count: { likes: number };
-}
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const learnMoreRef = useRef<HTMLDivElement>(null);
-  const [recentBlogs, setRecentBlogs] = useState<BlogPost[]>([]);
-
-  useEffect(() => {
-    const fetchRecentBlogs = async () => {
-        try {
-            const res = await blogAPI.getRecent(1);
-            // Limit to 3 for the landing page
-            setRecentBlogs(res.data.data.slice(0, 3));
-        } catch (error) {
-            console.error("Failed to fetch recent blogs", error);
-        }
-    };
-    fetchRecentBlogs();
-  }, []);
 
   const scrollToLearnMore = () => {
     learnMoreRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,9 +43,9 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                F
+                B
               </div>
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">FastAuth</span>
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Blog app</span>
             </div>
             
             <div className="flex items-center gap-4">
@@ -173,7 +148,7 @@ export default function LandingPage() {
       <section ref={learnMoreRef} className="py-24 bg-gray-50 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl mb-4">Why choose FastAuth?</h2>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl mb-4">Why choose Blog app?</h2>
                 <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Everything you need to create compelling content and manage your workflow efficiently.</p>
             </div>
             
@@ -218,52 +193,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Recent Snippets Section */}
-        {recentBlogs.length > 0 && (
-            <section className="py-24 bg-white dark:bg-gray-950">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl mb-4">Latest from our Community</h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Discover what others are writing about today.</p>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {recentBlogs.map(blog => (
-                            <div key={blog.id} className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
-                                <div className="flex items-center gap-3 mb-4">
-                                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-                                        {blog.authorName.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold text-gray-900 dark:text-white text-sm">{blog.authorName}</p>
-                                        <p className="text-xs text-gray-500">{new Date(blog.createdAt).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">{blog.title}</h3>
-                                <div 
-                                    className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4 whitespace-pre-wrap"
-                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
-                                />
-                                <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200 dark:border-gray-800">
-                                    <span className="flex items-center gap-1">
-                                        <ArrowRight className="w-3 h-3" /> Read more
-                                    </span>
-                                    <span>{blog._count.likes} likes</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                     <div className="text-center mt-12">
-                         <button 
-                            onClick={() => navigate('/blogs')}
-                            className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
-                         >
-                             View All Posts <ArrowRight className="w-4 h-4" />
-                         </button>
-                     </div>
-                </div>
-            </section>
-        )}
 
       {/* CTA Section */}
       <section className="py-24">
@@ -274,7 +204,7 @@ export default function LandingPage() {
                 
                 <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Ready to start your journey?</h2>
                 <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto mb-10 relative z-10">
-                    Join thousands of students and creators who are already sharing their stories on FastAuth.
+                    Join thousands of students and creators who are already sharing their stories on Blog app.
                 </p>
                 <button 
                      onClick={() => navigate('/register')}
@@ -288,7 +218,7 @@ export default function LandingPage() {
 
       <footer className="bg-gray-50 dark:bg-gray-950 py-12 border-t border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-gray-400">
-              <p>&copy; {new Date().getFullYear()} FastAuth. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} Blog app. All rights reserved.</p>
           </div>
       </footer>
     </div>
