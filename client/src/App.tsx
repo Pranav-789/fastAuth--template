@@ -15,6 +15,7 @@ import CreateBlog from './pages/CreateBlog';
 import BlogDetail from './pages/BlogDetail';
 import MyBlogs from './pages/MyBlogs';
 import LandingPage from './pages/LandingPage';
+import UserProfile from './pages/UserProfile';
 
 function App() {
   return (
@@ -50,8 +51,9 @@ function App() {
                 <Route path=":blogId" element={<BlogDetail />} />
                 <Route path="my-blogs" element={<MyBlogs />} />
               </Route>
+              <Route path="/profile/:userId" element={<UserProfile />} />
             </Route>
-            
+
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { blogAPI } from '../lib/api';
 import DOMPurify from 'dompurify';
-import image from '../../public/image.png';
 
 interface BlogPost {
   id: number;
@@ -160,7 +159,7 @@ export default function LandingPage() {
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-30"></div>
                 <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
                     <img 
-                        src={image} 
+                        src="/image.png" 
                         alt="Platform Preview" 
                         className="w-full h-auto object-cover opacity-90 dark:opacity-80"
                     />
@@ -242,7 +241,7 @@ export default function LandingPage() {
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">{blog.title}</h3>
                                 <div 
-                                    className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4"
+                                    className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4 whitespace-pre-wrap"
                                     dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
                                 />
                                 <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200 dark:border-gray-800">

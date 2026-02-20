@@ -1,12 +1,12 @@
 # Blog App
 
-A full-stack web application for managing todos and user authentication. Built with React on the frontend and Express.js with Prisma on the backend.
+A full-stack web application for creating and managing blogs, along with user authentication. Built with React on the frontend and Express.js with Prisma on the backend.
 
 ## 🌟 Features
 
 - **User Authentication**: Register, login, and JWT-based session management
-- **Todo Management**: Create, read, update, and delete todos
-- **User Profiles**: Manage user information and settings
+- **Blog Management**: Create, read, update, delete, like, and comment on blog posts
+- **User Profiles**: Manage user information, follow/unfollow users, and view their blogs
 - **Protected Routes**: Secure routes with JWT authentication
 - **Email Notifications**: Email integration using Nodemailer
 - **Password Security**: Encrypted passwords with bcryptjs
@@ -185,12 +185,15 @@ npm run build
 - `POST /api/auth/login` - Login user
 - `POST /api/auth/logout` - Logout user
 
-### Todo Routes
-- `GET /api/todos` - Get all todos
-- `POST /api/todos` - Create new todo
-- `GET /api/todos/:id` - Get specific todo
-- `PUT /api/todos/:id` - Update todo
-- `DELETE /api/todos/:id` - Delete todo
+### Blog Routes
+- `GET /api/blog/recent/:pageNum` - Get recent blogs
+- `GET /api/blog/popular/:pageNum` - Get popular blogs
+- `GET /api/blog/get/:postId` - Get specific blog post
+- `POST /api/blog/create` - Create new blog post
+- `PUT /api/blog/update` - Update blog post
+- `DELETE /api/blog/delete` - Delete blog post
+- `POST /api/blog/like` - Like a blog post
+- `POST /api/blog/comment` - Comment on a blog post
 
 ### User Routes
 - `GET /api/users/profile` - Get user profile
@@ -214,8 +217,8 @@ npm run build
 
 The application uses Prisma ORM with PostgreSQL. Key models include:
 
-- **User**: Stores user information (email, password, profile)
-- **Todo**: Stores todo items with user associations
+- **User**: Stores user information (email, password, profile, followers, following)
+- **Blog**: Stores blog posts, likes, and comments with user associations
 - **Session**: Manages user sessions
 
 See [server/prisma/schema.prisma](server/prisma/schema.prisma) for the complete schema.

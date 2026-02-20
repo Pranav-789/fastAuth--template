@@ -56,7 +56,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -143,6 +143,29 @@ export default function Sidebar() {
                   </li>
                 );
               })}
+              {user && (
+                  <li>
+                    <Link
+                      to={`/profile/${user.id}`}
+                      onClick={() => setIsMobileOpen(false)}
+                      className={`
+                        flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors
+                        ${location.pathname === `/profile/${user.id}`
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                        }
+                      `}
+                      title={isCollapsed ? "My Profile" : undefined}
+                    >
+                      <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </span>
+                      {(!isCollapsed || isMobileOpen) && <span>My Profile</span>}
+                    </Link>
+                  </li>
+              )}
             </ul>
           </nav>
 

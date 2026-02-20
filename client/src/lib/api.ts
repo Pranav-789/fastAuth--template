@@ -66,6 +66,17 @@ export const authAPI = {
 export const userAPI = {
   // @ts-ignore
   getMe: () => apiClient.get('/api/user/me', { skipAuthRedirect: true }),
+  getUserById: (id: number) => apiClient.get(`/api/user/${id}`),
+  followUser: (accountId: number) => apiClient.post('/api/user/follow', { accountId }),
+  unfollowUser: (accountId: number) => apiClient.post('/api/user/unfollow', { accountId }),
+  getFollowers: (userId: number, limit?: number, cursor?: number | null) => 
+    apiClient.get(`/api/user/${userId}/followers`, { params: { limit, cursor } }),
+  getFollowing: (userId: number, limit?: number, cursor?: number | null) => 
+    apiClient.get(`/api/user/${userId}/following`, { params: { limit, cursor } }),
+  checkIfFollowing: (accountId: number) => 
+    apiClient.post('/api/user/check-following', { accountId }),
+  getFollowerCount: () => apiClient.get('/api/user/follower-count'),
+  getFollowingCount: () => apiClient.get('/api/user/following-count'),
 };
 
 // Todo API
@@ -103,6 +114,7 @@ export const blogAPI = {
       headers: { 'Content-Type': 'application/json' },
     }),
   getComments: (blogId: number) => apiClient.get(`/api/blog/comments/${blogId}`),
+  getAuthorBlogs: (authorId: number) => apiClient.get(`/api/blog/author/${authorId}`),
 };
 
 export default apiClient;

@@ -12,6 +12,7 @@ import {
   queryAuthorsBlogs,
   deleteBlog,
   queryComments,
+  queryBlogsByAuthorId,
 } from "../controller/blog.controller.js";
 import { verfiyJwt } from "../middleware/verifyJwt.js";
 
@@ -23,6 +24,7 @@ router.get("/get/:postId", verfiyJwt, queryBlogById);
 router.get("/popular/:pageNum", queryPopularBlogs);
 router.get("/check-like/:blogId", verfiyJwt, checkIfUserLikedBlog);
 router.get("/count-author/:authorId", countBlogsByAuthor);
+router.get("/author/:authorId", queryBlogsByAuthorId);
 router.get("/recent/:pageNum", queryRecentBlogs);
 router.post("/like", verfiyJwt, likeOnBlog);
 router.post("/comment", verfiyJwt, commentOnBlog);

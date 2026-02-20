@@ -5,7 +5,7 @@ A modern React application built with Vite, TailwindCSS, and Axios, featuring a 
 ## Features
 
 - 🔐 Authentication (Login/Register)
-- ✅ Todo Management
+- ✅ Blog Management
 - 🎨 Notion-inspired clean UI
 - 📱 Responsive design
 - 🔄 Automatic token refresh
@@ -81,7 +81,11 @@ client/
 │   │   ├── Login.tsx    # Login page
 │   │   ├── Register.tsx # Registration page
 │   │   ├── Dashboard.tsx # Dashboard page
-│   │   └── Todos.tsx    # Todo management page
+│   │   ├── Blogs.tsx    # Blogs management
+│   │   ├── BlogDetail.tsx # Blog post view
+│   │   ├── CreateBlog.tsx # Create blog post
+│   │   ├── MyBlogs.tsx # User's own blogs
+│   │   └── UserProfile.tsx # User profile page
 │   ├── lib/             # Utilities and API client
 │   │   └── api.ts       # Axios API client configuration
 │   ├── App.tsx          # Main app component with routing

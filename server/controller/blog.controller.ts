@@ -223,6 +223,40 @@ export const countBlogsByAuthor = async (req: Request, res: Response) => {
   });
 };
 
+export const queryBlogsByAuthorId = async (req: Request, res: Response) => {
+  const authorId = Number(req.params.authorId);
+
+  if (!authorId || isNaN(Number(authorId))) {
+    return res.status(400).json({ message: "Valid Author ID required" });
+  }
+
+  try {
+    const authorBlogs = await prisma.blog.findMany({
+      where: { userId: authorId },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        authorName: true,
+        _count: {
+          select: { likes: true },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return res.status(200).json({
+      message: "Blogs fetched successfully",
+      data: authorBlogs,
+    });
+  } catch (error) {
+    console.error("Error fetching author blogs:", error);
+    return res.status(500).json({ message: "Error fetching blogs" });
+  }
+};
+
 export const queryRecentBlogs = async(req: Request, res: Response) => {
   const { pageNum } = req.params;
   if (!pageNum) {

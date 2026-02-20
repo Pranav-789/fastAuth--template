@@ -150,7 +150,7 @@ export default function BlogDetail() {
         </header>
 
         <div
-          className="prose dark:prose-invert max-w-none mb-8 text-gray-700 dark:text-gray-300 leading-relaxed break-words"
+          className="prose dark:prose-invert max-w-none mb-8 text-gray-700 dark:text-gray-300 leading-relaxed break-words whitespace-pre-wrap font-serif"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
         />
 
