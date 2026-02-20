@@ -62,8 +62,10 @@ app.get("/db-health", async (_req, res) => {
   });
 
 
-app.listen(port, () => {
-    console.log(`The server is running on port ${port}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+      console.log(`The server is running on port ${port}`);
+  });
+}
 
 export default app;
