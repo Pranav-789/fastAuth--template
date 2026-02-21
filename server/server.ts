@@ -38,10 +38,10 @@ app.get('/', (req: Request, res: Response) => {
     console.log("Server is up and running");
 });
 
-import authRouter from './route/auth.routes.js'
-import userRouter from './route/user.routes.js'
-import todoRouter from './route/todo.route.js'
-import blogRouter from './route/blog.route.js'
+import authRouter from '../server/route/auth.routes.js'
+import userRouter from '../server/route/user.routes.js'
+import todoRouter from '../server/route/todo.route.js'
+import blogRouter from '../server/route/blog.route.js'
 import { prisma } from './db/prisma.js';
 app.use('/api/auth', authRouter)
 
