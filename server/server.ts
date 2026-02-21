@@ -8,13 +8,19 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "fast-auth-template-8dda.vercel.app",
+  "fast-auth-template-8dda-git-main-pranavs-projects-203674bc.vercel.app",
+  "fast-auth-template-8dda-j5ll9oxsl-pranavs-projects-203674bc.vercel.app"
+]
+
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
     if (!origin) {
       return callback(null, true);
     }
 
-    if (origin.endsWith(".vercel.app")) {
+    if (allowedOrigins.some((o) => origin.endsWith(o))) {
       return callback(null, true);
     }
 
