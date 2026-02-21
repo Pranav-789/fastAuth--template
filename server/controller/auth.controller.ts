@@ -153,22 +153,19 @@ export const loginUser = async(req: Request, res: Response) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
+        const accessToken = generateAccessToken(user.id);
+        const tempSessionId = crypto.randomUUID();
+        const refreshToken = generateRefreshToken(user.id, tempSessionId);
+
         const session = await prisma.session.create({
             data: {
+                id: tempSessionId,
                 userId: user.id,
-                refreshToken: "",
+                refreshToken,
                 expiresAt: new Date(
-                    Date.now() + 7*24*60*60*1000 
+                    Date.now() + 7*24*60*60*1000
                 )
             }
-        });
-
-        const accessToken = generateAccessToken(user.id);
-        const refreshToken = generateRefreshToken(user.id, session.id);
-
-        await prisma.session.update({
-            where: {id: session.id},
-            data: {refreshToken},
         });
         console.log("login request received");
         return res
