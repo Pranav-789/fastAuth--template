@@ -34,14 +34,14 @@ app.use(cookieParser());
 
 const port = process.env.PORT || 8000;
 
-app.get('/', (req: Request, res: Response) => {
-    console.log("Server is up and running");
+app.get('/', (_req: Request, res: Response) => {
+  res.status(200).json({ message: 'Server is up and running' });
 });
 
-import authRouter from '../server/route/auth.routes.js'
-import userRouter from '../server/route/user.routes.js'
-import todoRouter from '../server/route/todo.route.js'
-import blogRouter from '../server/route/blog.route.js'
+import authRouter from './route/auth.routes.js'
+import userRouter from './route/user.routes.js'
+import todoRouter from './route/todo.route.js'
+import blogRouter from './route/blog.route.js'
 import { prisma } from './db/prisma.js';
 app.use('/api/auth', authRouter)
 
@@ -62,10 +62,10 @@ app.get("/db-health", async (_req, res) => {
   });
 
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-      console.log(`The server is running on port ${port}`);
-  });
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   app.listen(port, () => {
+//       console.log(`The server is running on port ${port}`);
+//   });
+// }
 
 export default app;
