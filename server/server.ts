@@ -9,9 +9,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "fast-auth-template-8dda.vercel.app",
-  "fast-auth-template-8dda-git-main-pranavs-projects-203674bc.vercel.app",
-  "fast-auth-template-8dda-j5ll9oxsl-pranavs-projects-203674bc.vercel.app"
+  "http://localhost:5173"
 ]
 
 const corsOptions: CorsOptions = {
@@ -63,10 +61,10 @@ app.get("/db-health", async (_req, res) => {
   });
 
 
-// if (process.env.NODE_ENV !== 'production') {
-//   app.listen(port, () => {
-//       console.log(`The server is running on port ${port}`);
-//   });
-// }
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+      console.log(`The server is running on port ${port}`);
+  });
+}
 
 export default app;
