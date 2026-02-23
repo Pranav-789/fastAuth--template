@@ -108,6 +108,7 @@ export const queryBlogById = async(req: Request, res: Response) => {
           select: {
             title: true,
             content: true,
+            userId: true,
             authorName: true,
             createdAt: true,
             updatedAt: true,
@@ -127,6 +128,7 @@ export const queryBlogById = async(req: Request, res: Response) => {
                 content: blogPost.content,
                 createdAt: blogPost.createdAt,
                 updatedAt: blogPost.updatedAt,
+                authorId: blogPost.userId,
                 isLiked: blogPost.likes.length > 0,
                 likesCount: blogPost._count,
                 authorName: blogPost.authorName
@@ -169,6 +171,7 @@ export const queryPopularBlogs = async(req: Request, res: Response) => {
           take: limit,
           select: {
             id: true,
+            userId: true,
             title: true,
             authorName: true,
             createdAt: true,
@@ -178,7 +181,11 @@ export const queryPopularBlogs = async(req: Request, res: Response) => {
           },
         });
 
-        res.status(200).json({message: "Posts fetched successfully", data: popularBlogPosts, page: pageNumber})
+        const formattedData = popularBlogPosts.map(post => ({
+          ...post,
+          authorId: post.userId
+        }));
+        res.status(200).json({message: "Posts fetched successfully", data: formattedData, page: pageNumber})
     } catch (error) {
         res.status(400).json({message: "Error fetching blogPosts"});
     }
@@ -287,6 +294,7 @@ export const queryRecentBlogs = async(req: Request, res: Response) => {
       take: limit,
       select: {
         id: true,
+        userId: true,
         title: true,
         createdAt: true,
         authorName: true,
@@ -296,11 +304,16 @@ export const queryRecentBlogs = async(req: Request, res: Response) => {
       },
     });
 
+    const formattedData = popularBlogPosts.map(post => ({
+      ...post,
+      authorId: post.userId
+    }));
+
     res
       .status(200)
       .json({
         message: "Posts fetched successfully",
-        data: popularBlogPosts,
+        data: formattedData,
         page: pageNumber,
       });
   } catch (error) {
@@ -411,6 +424,13 @@ export const queryComments = async(req: Request, res: Response) => {
   try {
     const commentsOnPost = await prisma.comment.findMany({
         where: {blogId: blogId},
+        select: {
+            id: true,
+            content: true,
+            userName: true,
+            userId: true,
+            createdAt: true,
+          },
         orderBy: {
             createdAt: 'desc'
         }

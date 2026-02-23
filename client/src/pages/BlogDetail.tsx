@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { blogAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import DOMPurify from 'dompurify';
 
 interface Comment {
   id: number;
+  userId: number;
   userName: string;
   content: string;
   createdAt: string;
@@ -14,6 +15,7 @@ interface Comment {
 interface BlogPost {
   title: string;
   content: string;
+  authorId: number;
   authorName: string;
   createdAt: string;
   isLiked: boolean;
@@ -136,17 +138,17 @@ export default function BlogDetail() {
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight break-words">
             {blog.title}
           </h1>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+          <Link to={`/profile/${blog.authorId}`} className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:shadow-lg transition-all">
               {blog.authorName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <p className="font-medium text-gray-900 dark:text-gray-100">
+              <p className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {blog.authorName}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Author</p>
             </div>
-          </div>
+          </Link>
         </header>
 
         <div
@@ -224,14 +226,14 @@ export default function BlogDetail() {
               key={comment.id}
               className="group flex gap-4 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md"
             >
-              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold shrink-0">
+              <Link to={`/profile/${comment.userId}`} className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold shrink-0 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                 {comment.userName.charAt(0).toUpperCase()}
-              </div>
+              </Link>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+                  <Link to={`/profile/${comment.userId}`} className="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     {comment.userName}
-                  </span>
+                  </Link>
                   <span className="text-xs text-gray-400">
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </span>

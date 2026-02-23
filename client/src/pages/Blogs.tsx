@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { blogAPI } from '../lib/api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface BlogPost {
   id: number;
   title: string;
+  authorId: number;
   authorName: string;
   createdAt: string;
   _count: {
@@ -13,6 +14,7 @@ interface BlogPost {
 }
 
 export default function Blogs() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'recent' | 'popular'>('recent');
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,9 +102,16 @@ export default function Blogs() {
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(blog.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate(`/profile/${blog.authorId}`);
+                      }}
+                      className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-colors z-10 relative"
+                    >
                       {blog.authorName}
-                    </span>
+                    </button>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                     {blog.title}
