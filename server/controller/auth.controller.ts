@@ -172,14 +172,15 @@ export const loginUser = async(req: Request, res: Response) => {
         .status(200)
         .cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: "strict",
-            secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
+            secure: true,
             maxAge: 15 * 60 * 1000,
         })
         .cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: "strict",
-            secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
+            // secure: process.env.NODE_ENV === "production",
+            secure: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
         .json({
@@ -231,8 +232,8 @@ export const refreshAuthTokens = async(req: Request, res: Response) => {
         });
 
         return res.status(201)
-        .cookie("accessToken", newAccessToken, {httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV==='production'})
-        .cookie("refreshToken", newRefreshToken, {httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV==='production'})
+        .cookie("accessToken", newAccessToken, {httpOnly: true, sameSite: 'none', secure: true})
+        .cookie("refreshToken", newRefreshToken, {httpOnly: true, sameSite: 'none', secure: true})
         .json({message: "Cookies rotated successfully"});
     } catch (error) {
         return res.status(400).json({message: "Invalid or expired refresh token"})
