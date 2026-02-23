@@ -8,20 +8,22 @@ dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  process.env.CLIENT_URL as string
-]
-
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and any vercel preview/deployment URLs
+    if (origin.includes('localhost') || origin.includes('vercel.app')) {
       return callback(null, true);
     }
 
-    if (allowedOrigins.some((o) => origin.endsWith(o))) {
+    // Allow explicitly defined client URL
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
       return callback(null, true);
     }
 
+    // Block others gracefully
     return callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
